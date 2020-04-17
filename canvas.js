@@ -5,43 +5,44 @@ canvas.height = window.innerHeight;
 
 var c = canvas.getContext('2d');
 
-function Line(x1,y1,x2,y2,strokeStyle)
+
+
+function Line(x1,y1,x2,y2)
 {
     this.x1 = x1;
     this.y1 = y1;
 
     this.x2 = x2;
     this.y2 = y2;
+}
+
+function Point(x,y)
+{
+    this.x =x;
+    this.y =y;
+
     
-    this.r = r;
-    this.g = g;
-    this.b = b;
-
-    this.draw = function() {
-        c.beginPath();
-        c.moveTo(x1,y1);
-        c.lineTo(x2,y2);
-        c.strokeStyle = this.strokeStyle;
-        c.stroke();
-    }
-
-    this.update = function() {
-
-    }
 }
 
 var lines = [];
 
-for(var i = 1; i <= innerWidth ; i++)
-{
-    lines.push(new Line(i,0,i,innerHeight,"rgba(125,125,"+(255/innerWidth*i)+",0.5)"));
-}
 
 function animate() {
     requestAnimationFrame(animate);
-    lines.forEach(line => {
-        line.draw();
-    });
+
+    var r = Math.random() * 255;
+    var g = Math.random() * 255;
+    var b = Math.random() * 255;
+
+    for(var x = 0 ; x < innerWidth ; x++)
+    {
+        for(var y = 0 ; y < innerHeight ; y++)
+        {
+            c.beginPath();
+            c.fillStyle = "rgb("+r/innerWidth*x+","+g/innerWidth*x+","+b/innerWidth*x+")";
+            c.fillRect(x,y,1,1);
+        }
+    }
 }
 
 animate();
