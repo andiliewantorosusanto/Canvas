@@ -51,13 +51,20 @@ class Ball {
 }
 
 var balls = [];
-balls.push(new Ball(100,100,10,1,1));
+
+setInterval(addBall,125);
+function addBall()
+{
+    balls.push(new Ball(Math.random()*innerWidth,0,25,-3 + Math.random()*6,1));
+}
+
 function animate() {
     requestAnimationFrame(animate);
     c.fillStyle = "black";
     c.fillRect(0,0,innerWidth,innerHeight);
-    if(Math.random() < 0.1) balls.push(new Ball(Math.random()*innerWidth,0,25,-3 + Math.random()*6,1));
-    balls.forEach(ball => {
+    for(var i = 0 ; i < balls.length ; i++)
+    {
+        var ball = balls[i];
         ball.draw();
         ball.update();
         if(ball.isCollide()) 
@@ -70,13 +77,13 @@ function animate() {
             {
                 ball.bounceBack();
 
-                for(var i = 0 ; i < 5 ; i++)
+                for(var i = 0 ; i < 3 ; i++)
                 {
-                    //balls.push(new Ball(ball.x,ball.y,ball.r*0.5,ball.xVel*(Math.random() < 0.5 ? 1 : -1),ball.yVel*Math.random()));
+                    balls.push(new Ball(ball.x,ball.y,ball.r*0.5,ball.xVel*(Math.random()*4-2),ball.yVel*Math.random()));
                 }
             }
         }
-    });
+    }
 }
 
 animate();
