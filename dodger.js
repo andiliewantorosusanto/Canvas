@@ -111,7 +111,7 @@ function getMousePos(canvas, evt) {
 function animate() {
     requestAnimationFrame(animate);
     deltaTime++;
-
+    
     c.fillStyle = "black";
     c.fillRect(0,0,innerWidth,innerHeight);
     
