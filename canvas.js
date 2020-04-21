@@ -5,53 +5,46 @@ canvas.height = window.innerHeight;
 
 var c = canvas.getContext('2d');
 
-const MAX_COL = 100;
-const MAX_ROW = 100;
-const COLOR_CHANGE_SPEED_MAX = 5;
-const COLOR_CHANGE_SPEED_MIN = 1;
-function Line(x1,y1,x2,y2)
-{
-    this.x1 = x1;
-    this.y1 = y1;
+const MAX_COL = 10;
+const MAX_ROW = 10;
 
-    this.x2 = x2;
-    this.y2 = y2;
+let COLOR_R_MIN = 0;
+let COLOR_G_MIN = 0;
+let COLOR_B_MIN = 0;
+
+let COLOR_R_MAX = 255;
+let COLOR_G_MAX = 255;
+let COLOR_B_MAX = 255;
+
+var t = 1;
+
+function calculateColor(min,max,x,y,t)
+{
+    let temp = 0;
+    if(max < min)
+    {
+        temp = max;
+        max = min;
+        min = max;
+    } 
+    return min + max*Math.abs(Math.sin(Math.PI/180*(x+y+t)));
 }
 
-function Point(x,y)
-{
-    this.x =x;
-    this.y =y;    
-}
-
-var lines = [];
-
-// var r = Math.random() * 255;
-// var g = Math.random() * 255;
-// var b = Math.random() * 255;
-
-// var rAdd, gAdd, bAdd = true;
-
-var time = 1;
 function animate() {
     requestAnimationFrame(animate);
-    t++;
-    // (rAdd) ? r += COLOR_CHANGE_SPEED_MIN + Math.random() * (COLOR_CHANGE_SPEED_MAX - COLOR_CHANGE_SPEED_MIN) : r -= COLOR_CHANGE_SPEED_MIN + Math.random() * (COLOR_CHANGE_SPEED_MAX - COLOR_CHANGE_SPEED_MIN);
-    // if(r >= 255 || r <= 0) rAdd=!rAdd;
-    
-    // (gAdd) ? g += COLOR_CHANGE_SPEED_MIN + Math.random() * (COLOR_CHANGE_SPEED_MAX - COLOR_CHANGE_SPEED_MIN) : g -= COLOR_CHANGE_SPEED_MIN + Math.random() * (COLOR_CHANGE_SPEED_MAX - COLOR_CHANGE_SPEED_MIN);
-    // if(g >= 255 || g <= 0) gAdd=!gAdd;
-
-    // (bAdd) ? b += COLOR_CHANGE_SPEED_MIN + Math.random() * (COLOR_CHANGE_SPEED_MAX - COLOR_CHANGE_SPEED_MIN) : b -= COLOR_CHANGE_SPEED_MIN + Math.random() * (COLOR_CHANGE_SPEED_MAX - COLOR_CHANGE_SPEED_MIN);
-    // if(b >= 255 || b <= 0) bAdd=!bAdd;
+    t += 1;
 
     for(var x = 0 ; x < MAX_ROW ; x++)
     {
         for(var y = 0 ; y < MAX_COL ; y++)
         {
             c.beginPath();
-            //c.fillStyle = "rgb("+r/MAX_COL*x+","+g/MAX_COL*x+","+b/MAX_COL*x+")";
-            c.fillStyle = "rgb("+(255*Math.abs(Math.sin(x+t)))+","+(255*Math.abs(Math.cos(y+t)))+","+(255*Math.abs(Math.tan(x+y*t)))+")";
+            r = calculateColor(0,255,x,y,t);
+            g = calculateColor(0,128,x,y,t);
+            b = calculateColor(128,255,x,y,t);
+            //c.fillStyle = "rgb("+(255*Math.abs(Math.sin(Math.PI/180*(x+t))))+","+(255*Math.abs(Math.cos(Math.PI/180*(y+t))))+","+(255*Math.abs(Math.sin(Math.PI/180*(y+t))*Math.abs(Math.cos(Math.PI/180*(x+t)))))+")";
+            //c.fillStyle = "rgb("+(255*Math.abs(Math.sin(Math.PI/180*(x+y+t))))+","+(255*Math.abs(Math.cos(Math.PI/180*(x+y+t))))+","+(255*Math.abs(Math.sin(Math.PI/180*(y+x+t))))+")";
+            c.fillStyle = "rgb("+r+","+g+","+b+")";
             c.fillRect(x*innerWidth/MAX_COL,y*innerHeight/MAX_ROW,innerWidth/MAX_COL,innerHeight/MAX_ROW);
         }
     }
