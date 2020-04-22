@@ -67,45 +67,28 @@ class Ball {
 }
 
 var balls = [];
-
-//setInterval(addBall,125);
 function addBall()
 {
     balls.push(new Ball(Math.random()*innerWidth,-100,25,-3 + Math.random()*6,1));
 }
 
-setInterval(addBall,100);
-//addBall();
+setInterval(addBall,500);
 function animate() {
     
     requestAnimationFrame(animate);
     c.fillStyle = "black";
     c.fillRect(0,0,innerWidth,innerHeight);
-    for(var i = 0 ; i < balls.length ; i++)
-    {
-        var ball = balls[i];
+
+    balls.forEach(ball => {
         ball.draw();
         ball.update();
-
-        if(ball.isCollide()) 
-        {
-            if(ball.isTooSmall())
-            {
-                balls.splice(balls.indexOf(ball),1);
-            } 
-            else
-            {
-                ball.bounceBack();
-
-                for(var i = 0 ; i < 1 ; i++)
-                {
-                    //addBall();
-                    // let newBall = new Ball(ball.x,ball.y,ball.r*0.5,ball.xVel*(Math.random()*4-2),ball.yVel*Math.random());
-                    // balls = [...balls,newBall];
-                }
-            }
-        }
-    }
+    });
+    balls = balls.filter(ball => !ball.isTooSmall());
+    balls.filter(ball => ball.isCollide()).forEach(ball => {
+        ball.bounceBack();
+        let newBall = new Ball(ball.x,ball.y,ball.r*0.5,ball.xVel*(Math.random()*4-2),ball.yVel*Math.random());
+        balls = [...balls,newBall];
+    });
 }
 
 animate();
