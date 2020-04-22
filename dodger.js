@@ -15,7 +15,7 @@ class Ball {
         this.xVel = xVel;
         this.yVel = yVel;
 
-        this.gVel = 0.05;
+        this.gVel = 0.1;
     }
 
     draw() {
@@ -41,10 +41,7 @@ class Ball {
     }
 
     isCollide(player) {
-        if(pythagoras(this.x,this.y,player.x,player.y) <= this.r+player.r)
-        {
-            this.touched = true;
-        }
+        return (pythagoras(this.x,this.y,player.x,player.y) <= this.r+player.r)
     }
 
     isOutsideMap() {
@@ -74,13 +71,52 @@ class Player {
     }
 
     update() {
-
+        
     }
 }
 
 class Game {
     constructor() {
-        this.Spawnrate = 15; // 1 sec = 60
+        this.spawnRate = 60; // 1 sec = 60
+        this.gravity = 0.1; // fall acc
+        this.deltaTime = 0; // time has passed based on fps
+        this.score = 0;
+        this.scoreRate = 60 // every 60 add score
+        this.start = true;
+    }
+
+    update() {
+        this.deltaTime += 1;
+        
+        if(this.deltaTime % Math.floor(this.spawnRate) == 0){addBall();}
+        if(this.deltaTime % this.scoreRate == 0){this.score++;}
+
+        if(this.deltaTime % 300 == 0)
+        {
+            this.spawnRate *= 0.9;
+            this.gravity += 0.01
+        }
+    }
+
+    renderScore() {
+        c.font = "30px arial";
+        c.fillStyle = "white";
+        c.textAlign = "left";
+        c.fillText(`Score : ${this.score}`,0,30);
+    }
+    
+    gameOver() {
+        this.start = false;
+        c.font = " 120px arial";
+        c.fillStyle = "white";
+        c.textAlign = "center";
+        c.fillText(`You Lose`,innerWidth/2,innerHeight/2);
+    }
+
+    restart() {
+        balls = [];
+        this.score = 0;
+        this.deltaTime = 0;
     }
 }
 
@@ -88,7 +124,6 @@ class Game {
 var balls = [];
 var player = new Player();
 var game = new Game();
-var deltaTime = 0;
 
 function pythagoras(x1,y1,x2,y2)
 {
@@ -97,7 +132,8 @@ function pythagoras(x1,y1,x2,y2)
 
 function addBall()
 {
-    balls.push(new Ball(Math.random()*innerWidth,-100,25,-3 + Math.random()*6,1));
+    ball = new Ball(Math.random()*innerWidth,-100,25,-3 + Math.random()*6,1);
+    balls = [...balls,ball];
 }
 
 function getMousePos(canvas, evt) {
@@ -110,28 +146,29 @@ function getMousePos(canvas, evt) {
 
 function animate() {
     requestAnimationFrame(animate);
-    deltaTime++;
     
-    c.fillStyle = "black";
-    c.fillRect(0,0,innerWidth,innerHeight);
-    
-    balls.forEach(ball => {
-        ball.update();
-        ball.draw();
-        ball.isCollide(player);
-        if(ball.isOutsideMap())
-        {
-            balls.splice(ball,1);
-        }
-    });
-
-    player.update();
-    player.draw();
-
-    if(deltaTime % game.Spawnrate == 0)
+    if(game.start)
     {
-        addBall();
-    } 
+        c.fillStyle = "black";
+        c.fillRect(0,0,innerWidth,innerHeight);
+        
+        balls.forEach(ball => {
+            ball.update();
+            ball.draw();
+            if(ball.isCollide(player))
+            {
+                game.gameOver();
+            }
+        });
+
+        balls = balls.filter(ball => !ball.isOutsideMap());
+
+        player.update();
+        player.draw();
+
+        game.update();
+        game.renderScore();
+    }
 }
 
 canvas.addEventListener('mousemove',function(evt){
@@ -139,4 +176,5 @@ canvas.addEventListener('mousemove',function(evt){
     player.x = pos.x;
     player.y = pos.y;
 })
+
 animate();
